@@ -1,0 +1,265 @@
+loadstring(game:HttpGet("https://pastebin.com/raw/xxxxxxxxx"))()
+-- [[ PREMIUM MOBILE MENU SCRIPT ]] --
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+
+-- Tạo Canvas chính bảo mật cao (Tránh bị game phát hiện nếu Executor hỗ trợ)
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "MobileMenu_VIP"
+local parentTarget = (CoreGui:FindFirstChild("RobloxGui") or CoreGui)
+ScreenGui.Parent = parentTarget
+ScreenGui.ResetOnSpawn = false
+
+-- ==========================================
+-- 1. NÚT TRÒN MỞ/ẨN MENU (DÀNH CHO ĐIỆN THOẠI)
+-- ==========================================
+local OpenButton = Instance.new("ImageButton")
+OpenButton.Name = "OpenButton"
+OpenButton.Size = UIDim2.new(0, 60, 0, 60)
+OpenButton.Position = UIDim2.new(0.05, 0, 0.2, 0) -- Vị trí mặc định bên trái màn hình
+OpenButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+OpenButton.Image = "rbxassetid://5020.png" -- Hiển thị ảnh của bạn làm nút bấm nhanh
+OpenButton.Active = true
+OpenButton.Draggable = true -- Có thể dùng ngón tay kéo nút này đi vị trí khác tùy ý
+OpenButton.Parent = ScreenGui
+
+local ButtonCorner = Instance.new("UICorner")
+ButtonCorner.CornerRadius = UDim.new(1, 0) -- Làm tròn xoe nút bấm
+ButtonCorner.Parent = OpenButton
+
+local ButtonStroke = Instance.new("UIStroke")
+ButtonStroke.Color = Color3.fromRGB(255, 0, 0)
+ButtonStroke.Thickness = 2
+ButtonStroke.Parent = OpenButton
+
+-- ==========================================
+-- 2. GIAO DIỆN MENU CHÍNH
+-- ==========================================
+local MainMenu = Instance.new("Frame")
+MainMenu.Name = "MainMenu"
+MainMenu.Size = UIDim2.new(0, 320, 0, 400)
+MainMenu.Position = UIDim2.new(0.5, -160, 0.5, -200)
+MainMenu.BackgroundColor3 = Color3.fromRGB(25 sampled or 25, 25, 25)
+MainMenu.BorderSizePixel = 0
+MainMenu.Visible = false -- Ban đầu ẩn đi, bấm nút tròn mới hiện
+MainMenu.Active = true
+MainMenu.Draggable = true -- Di chuyển menu bằng cách giữ kéo phần trống
+MainMenu.Parent = ScreenGui
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 12)
+MainCorner.Parent = MainMenu
+
+-- Hình ảnh logo từ file 5020.png bên trong menu
+local MenuLogo = Instance.new("ImageLabel")
+MenuLogo.Size = UIDim2.new(0, 90, 0, 90)
+MenuLogo.Position = UIDim2.new(0.5, -45, 0, 15)
+MenuLogo.Image = "rbxassetid://5020.png"
+MenuLogo.BackgroundTransparency = 1
+MenuLogo.Parent = MainMenu
+
+-- Tiêu đề
+local Title = Instance.new("TextLabel")
+Title.Size = UIDim2.new(1, 0, 0, 30)
+Title.Position = UIDim2.new(0, 0, 0, 110)
+Title.Text = "PREMIUM MENU MOBILE"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 18
+Title.BackgroundTransparency = 1
+Title.Parent = MainMenu
+
+-- Khung cuộn chứa tính năng bằng ngón tay
+local Container = Instance.new("ScrollingFrame")
+Container.Size = UIDim2.new(1, -20, 1, -160)
+Container.Position = UIDim2.new(0, 10, 0, 150)
+Container.BackgroundTransparency = 1
+Container.CanvasSize = UIDim2.new(0, 0, 0, 320)
+Container.ScrollBarThickness = 2
+Container.Parent = MainMenu
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Padding = UDim.new(0, 8)
+UIListLayout.Parent = Container
+
+-- Sự kiện nhấn nút Tròn để Ẩn/Hiện Menu
+OpenButton.MouseButton1Click:Connect(function()
+    MainMenu.Visible = not MainMenu.Visible
+end)
+
+-- ==========================================
+-- 3. HÀM TẠO NÚT BẬT/TẮT TÍNH NĂNG
+-- ==========================================
+local function CreateToggle(name, callback)
+    local Enabled = false
+    local Button = Instance.new("TextButton")
+    Button.Size = UIDim2.new(1, 0, 0, 42)
+    Button.BackgroundColor3 = Color3.fromRGB(180, 40, 40) -- Đỏ là tắt
+    Button.Text = name .. " : OFF"
+    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Button.Font = Enum.Font.SourceSansBold
+    Button.TextSize = 15
+    Button.Parent = Container
+    
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 8)
+    Corner.Parent = Button
+    
+    Button.MouseButton1Click:Connect(function()
+        Enabled = not Enabled
+        if Enabled then
+            Button.BackgroundColor3 = Color3.fromRGB(40, 180, 40) -- Xanh là bật
+            Button.Text = name .. " : ON"
+        else
+            Button.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+            Button.Text = name .. " : OFF"
+        end
+        callback(Enabled)
+    end)
+end
+
+-- ==========================================
+-- 4. KÍCH HOẠT CÁC TÍNH NĂNG
+-- ==========================================
+
+-- 1. Tốc độ giới hạn: 500
+CreateToggle("Tốc Độ (Speed 500)", function(state)
+    _G.SpeedHack = state
+    task.spawn(function()
+        while _G.SpeedHack do
+            pcall(function()
+                if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                    LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = 500
+                end
+            end)
+            task.wait(0.1)
+        end
+        pcall(function() LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = 16 end)
+    end)
+end)
+
+-- 2. Nhảy cao giới hạn: 500
+CreateToggle("Nhảy Cao (Jump 500)", function(state)
+    _G.JumpHack = state
+    task.spawn(function()
+        while _G.JumpHack do
+            pcall(function()
+                if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                    local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                    if hum.UseJumpPower then
+                        hum.JumpPower = 500
+                    else
+                        hum.JumpHeight = 500
+                    end
+                end
+            end)
+            task.wait(0.1)
+        end
+        pcall(function() 
+            local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+            if hum.UseJumpPower then hum.JumpPower = 50 else hum.JumpHeight = 7.2 end
+        end)
+    end)
+end)
+
+-- 3. Xuyên tường (Noclip)
+CreateToggle("Xuyên Tường (Noclip)", function(state)
+    _G.Noclip = state
+    if state then
+        _G.NoclipConn = RunService.Stepped:Connect(function()
+            if _G.Noclip and LocalPlayer.Character then
+                for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end)
+    else
+        if _G.NoclipConn then _G.NoclipConn:Disconnect() end
+    end
+end)
+
+-- 4. Nhìn thấy tên người khác (ESP Name)
+local esp_folder = Instance.new("Folder", parentTarget)
+CreateToggle("Nhìn Thấy Tên (ESP)", function(state)
+    _G.ESPName = state
+    if not state then
+        esp_folder:ClearAllChildren()
+    else
+        task.spawn(function()
+            while _G.ESPName do
+                for _, v in pairs(Players:GetPlayers()) do
+                    if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("Head") and not esp_folder:FindFirstChild(v.Name) then
+                        local billboard = Instance.new("BillboardGui", esp_folder)
+                        billboard.Name = v.Name
+                        billboard.Adornee = v.Character.Head
+                        billboard.Size = UIDim2.new(0, 150, 0, 40)
+                        billboard.AlwaysOnTop = true
+                        billboard.StudsOffset = Vector3.new(0, 2.5, 0)
+                        
+                        local label = Instance.new("TextLabel", billboard)
+                        label.Size = UIDim2.new(1, 0, 1, 0)
+                        label.BackgroundTransparency = 1
+                        label.Text = v.Name
+                        label.TextColor3 = Color3.fromRGB(255, 235, 40)
+                        label.TextSize = 13
+                        label.Font = Enum.Font.SourceSansBold
+                    end
+                end
+                task.wait(1)
+            end
+        end)
+    end
+end)
+
+-- 5. Bay (Fly tối ưu hóa cho Joystick Điện Thoại)
+local FlyBodyGyro, FlyBodyVelocity
+CreateToggle("Bay (Fly Mobile)", function(state)
+    _G.FlyMobile = state
+    local char = LocalPlayer.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    
+    if state then
+        local pPart = char.HumanoidRootPart
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        
+        FlyBodyGyro = Instance.new("BodyGyro", pPart)
+        FlyBodyGyro.P = 9e4
+        FlyBodyGyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+        FlyBodyGyro.cframe = pPart.CFrame
+        
+        FlyBodyVelocity = Instance.new("BodyVelocity", pPart)
+        FlyBodyVelocity.velocity = Vector3.new(0, 0.1, 0)
+        FlyBodyVelocity.maxForce = Vector3.new(9e9, 9e9, 9e9)
+        
+        task.spawn(function()
+            while _G.FlyMobile and char and hum and pPart do
+                hum.PlatformStand = true
+                -- Nhận tín hiệu di chuyển từ Joystick của điện thoại
+                local moveDir = hum.MoveDirection
+                if moveDir.Magnitude > 0 then
+                    -- Bay theo hướng camera điện thoại đang nhìn và Joystick đang gạt
+                    FlyBodyVelocity.velocity = moveDir * 70 -- Tốc độ bay (Có thể chỉnh số 70 cao hơn)
+                else
+                    FlyBodyVelocity.velocity = Vector3.new(0, 0.1, 0) -- Đứng yên trên không
+                end
+                FlyBodyGyro.cframe = workspace.CurrentCamera.CFrame
+                task.wait()
+            end
+            -- Khôi phục lại khi tắt trạng thái bay
+            if FlyBodyGyro then FlyBodyGyro:Destroy() end
+            if FlyBodyVelocity then FlyBodyVelocity:Destroy() end
+            if hum then hum.PlatformStand = false end
+        end)
+    else
+        if FlyBodyGyro then FlyBodyGyro:Destroy() end
+        if FlyBodyVelocity then FlyBodyVelocity:Destroy() end
+        if char:FindFirstChildOfClass("Humanoid") then
+            char:FindFirstChildOfClass("Humanoid").PlatformStand = false
+        end
+    end
+end)
+             
